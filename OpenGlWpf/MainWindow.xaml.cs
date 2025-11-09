@@ -76,6 +76,7 @@ namespace OpenGlWpf
 			glControl.SwapBuffers();
 		}
 
+		 
 
 		private void DrawPyramid()
 		{
