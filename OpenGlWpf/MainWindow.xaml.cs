@@ -75,9 +75,6 @@ namespace OpenGlWpf
 
 			glControl.SwapBuffers();
 		}
-
-		 
-
 		private void DrawPyramid()
 		{
 			GL.Begin(BeginMode.Triangles);
@@ -90,9 +87,7 @@ namespace OpenGlWpf
 				new float[] {  1f, 0f,  1f },
 				new float[] {  1f, 0f, -1f }, 
 				new float[] { -1f, 0f, -1f } 
-			};
-
-			
+			};		
 			GL.Color3(1.0, 0.0, 0.0);
 			GL.Vertex3(top[0], top[1], top[2]);
 			GL.Vertex3(baseVertices[0][0], baseVertices[0][1], baseVertices[0][2]);
