@@ -3,7 +3,6 @@ using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Windows;
-using System.Windows.Forms.Integration;
 using System.Windows.Threading;
 namespace OpenGlWpf
 {
@@ -12,7 +11,9 @@ namespace OpenGlWpf
 		private GLControl glControl;
 		private DispatcherTimer timer;
 		private float angle = 0f;
-
+		float y = -6.0f;
+		float x = 0.0f;
+		float z = -1.0f;
 		public MainWindow()
 		{
 			InitializeComponent();
@@ -29,7 +30,7 @@ namespace OpenGlWpf
 			glControl.Resize += GlControl_Resize;
 
 			timer = new DispatcherTimer();
-			timer.Interval = TimeSpan.FromMilliseconds(64);
+			timer.Interval = TimeSpan.FromMilliseconds(16);
 			timer.Tick += (s, e) =>
 			{
 				angle = (float)ScroolValue.Value;
@@ -40,7 +41,7 @@ namespace OpenGlWpf
 
 		private void GlControl_Load(object sender, EventArgs e)
 		{
-			GL.ClearColor(System.Drawing.Color.CornflowerBlue);
+			GL.ClearColor(System.Drawing.Color.LightGray);
 			GL.Enable(EnableCap.DepthTest);
 			SetupViewport();
 		}
@@ -68,7 +69,7 @@ namespace OpenGlWpf
 			GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
 			GL.LoadIdentity();
-			GL.Translate(0.0f, 0.0f, -6.0f);
+			GL.Translate(x, z, y);
 			GL.Rotate(angle, 0.0f, 1.0f, 0.0f);
 
 			DrawPyramid();
@@ -87,37 +88,61 @@ namespace OpenGlWpf
 				new float[] {  1f, 0f,  1f },
 				new float[] {  1f, 0f, -1f }, 
 				new float[] { -1f, 0f, -1f } 
-			};		
-			GL.Color3(1.0, 0.0, 0.0);
-			GL.Vertex3(top[0], top[1], top[2]);
-			GL.Vertex3(baseVertices[0][0], baseVertices[0][1], baseVertices[0][2]);
-			GL.Vertex3(baseVertices[1][0], baseVertices[1][1], baseVertices[1][2]);
-
-			GL.Color3(0.0, 1.0, 0.0);
-			GL.Vertex3(top[0], top[1], top[2]);
-			GL.Vertex3(baseVertices[1][0], baseVertices[1][1], baseVertices[1][2]);
-			GL.Vertex3(baseVertices[2][0], baseVertices[2][1], baseVertices[2][2]);
-
-			GL.Color3(0.0, 0.0, 1.0); 
-			GL.Vertex3(top[0], top[1], top[2]);
-			GL.Vertex3(baseVertices[2][0], baseVertices[2][1], baseVertices[2][2]);
-			GL.Vertex3(baseVertices[3][0], baseVertices[3][1], baseVertices[3][2]);
-
-			GL.Color3(1.0, 1.0, 0.0);
-			GL.Vertex3(top[0], top[1], top[2]);
-			GL.Vertex3(baseVertices[3][0], baseVertices[3][1], baseVertices[3][2]);
-			GL.Vertex3(baseVertices[0][0], baseVertices[0][1], baseVertices[0][2]);
-
-			GL.End();
+			};
 
 			
+			GL.Color3(1.0, 0.0, 0.0);
+			GL.Vertex3(0f, 1f, 0f);
+			GL.Vertex3(-1f, 0f, 1f);
+			GL.Vertex3(1f, 0f, 1f);
+
+			GL.Color3(0.0, 1.0, 0.0);
+			GL.Vertex3(0f, 1f, 0f);
+			GL.Vertex3(1f, 0f, 1f);
+			GL.Vertex3(1f, 0f, -1f);
+
+			GL.Color3(0.0, 0.0, 1.0);
+			GL.Vertex3(0f, 1f, 0f);
+			GL.Vertex3(1f, 0f, -1f);
+			GL.Vertex3(-1f, 0f, -1f);
+
+			GL.Color3(1.0, 1.0, 0.0);
+			GL.Vertex3(0f, 1f, 0f);
+			GL.Vertex3(-1f, 0f, -1f);
+			GL.Vertex3(-1f, 0f, 1f);
+			GL.End();
+
 			GL.Begin(BeginMode.Quads);
 			GL.Color3(0.5, 0.5, 0.5);
-			foreach (var v in baseVertices)
-			{
-				GL.Vertex3(v[0], v[1], v[2]);
-			}	
+			GL.Vertex3(-1f, 0f, 1f);
+			GL.Vertex3(1f, 0f, 1f);
+			GL.Vertex3(1f, 0f, -1f);
+			GL.Vertex3(-1f, 0f, -1f);
 			GL.End();
+		}
+		private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+		{
+			switch(e.Key)
+			{
+				case System.Windows.Input.Key.W:
+					y += 0.1f;
+					break;
+				case System.Windows.Input.Key.S:
+					y += -0.1f;
+					break;
+				case System.Windows.Input.Key.D:
+					x += -0.1f;
+					break;
+				case System.Windows.Input.Key.A:
+					x += 0.1f;
+					break;
+				case System.Windows.Input.Key.Space:
+					z += -0.1f;
+					break;
+				case System.Windows.Input.Key.LeftShift:
+					z += 0.1f;
+					break;
+			}
 		}
 	}
 	public static class GLU
