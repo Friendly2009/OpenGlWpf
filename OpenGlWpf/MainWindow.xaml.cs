@@ -3,6 +3,7 @@ using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Windows;
+using System.Windows.Media.Media3D;
 using System.Windows.Threading;
 namespace OpenGlWpf
 {
@@ -64,6 +65,50 @@ namespace OpenGlWpf
 			GL.LoadIdentity();
 		}
 
+
+		private float[] LookAt(float[] eye, float[] center, float[] up)
+		{
+			var f = Normalize(Subtract(center, eye));
+			var s = Normalize(Cross(f, up));
+			var u = Cross(s, f);
+
+			return new float[]
+			{
+		s[0], u[0], -f[0], 0,
+		s[1], u[1], -f[1], 0,
+		s[2], u[2], -f[2], 0,
+		-Dot(s, eye), -Dot(u, eye), Dot(f, eye), 1
+			};
+		}
+
+		private float[] Subtract(float[] a, float[] b)
+		{
+			return new float[] { a[0] - b[0], a[1] - b[1], a[2] - b[2] };
+		}
+
+		private float[] Normalize(float[] v)
+		{
+			float length = (float)Math.Sqrt(Dot(v, v));
+			return new float[] { v[0] / length, v[1] / length, v[2] / length };
+		}
+
+		private float Dot(float[] a, float[] b)
+		{
+			return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+		}
+
+		private float[] Cross(float[] a, float[] b)
+		{
+			return new float[]
+			{
+		a[1] * b[2] - a[2] * b[1],
+		a[2] * b[0] - a[0] * b[2],
+		a[0] * b[1] - a[1] * b[0]
+			};
+		}
+
+
+
 		private void GlControl_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
 		{
 			GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
@@ -71,7 +116,7 @@ namespace OpenGlWpf
 			GL.LoadIdentity();
 			GL.Translate(x, z, y);
 			GL.Rotate(angle, 0.0f, 1.0f, 0.0f);
-
+			GL.LoadMatrix(LookAt(new float[] { 0, 0, 0 }, new float[] { 0,0,0 }, new float[] { 0, 1, 0 }));
 			DrawPyramid();
 
 			glControl.SwapBuffers();
